@@ -1,0 +1,54 @@
+Pull request workshop:
+	login into github
+	go to github.com/ericwill
+	fork repo for intern training demo
+	git clone <git url>
+		make sure SSH and keys are working properly before preceding
+	clone your fork onto your machine using git clone
+	add the original repo's remote as "upstream"
+		git remote add upstream <address>
+		git remote set-url --push upstream no_push
+	(ericwill) make a commit and push it into master
+	have students do git fetch upstream
+	do a git log (graph) and show them FETCH_HEAD
+		git show FETCH_HEAD
+		git log upstream/master
+	now we merge with out local master branch
+		git merge upstream/master
+	note that origin/master is behind master and upstream/master
+		git checkout origin/master
+		git merge master
+		git checkout master
+		git push
+		git log
+			origin/master is in sync with upstream/master and master
+	(ericwill) commit and push the interns file, leave it empty
+	git checkout -b <your_name>
+	create a file called interns, with nothing in the file but your first name
+	git add and git commit
+	git push origin <your_name>
+	go to github.com and find the repo under ericwill's page
+	click the "Compare & pull request" entry for your branch
+	add a short comment, click create pull request
+	once your PR is merged, git checkout master && git pull upstream master
+		observe that your file from the PR is there
+	
+
+BACK TO PRESENTATION
+
+Bisect
+	show git bisect in git part I repo
+
+BACK TO PRESENTATION
+
+Difftool:
+	modify .git/config file in repo
+	add the following
+[diff]
+    tool = meld
+[difftool]
+    prompt = false
+[difftool "meld"]
+    cmd = meld "$LOCAL" "$REMOTE"
+
+	run git difftool <commit 1> <commit 2>
