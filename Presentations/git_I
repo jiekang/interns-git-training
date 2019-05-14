@@ -1,0 +1,172 @@
+Initialize git repository:
+	git init
+
+Global config:
+	git config --global user.name "Eric W"
+	git config --global user.email ericwill@redhat.com
+	modifies ~/.gitconfig or ~/.config/git/config
+System config:
+	use the --system flag, modifies /etc/gitconfig
+Repo specific:
+	no flags
+	git config <setting> inside the repo folder (repo/.git/config)
+
+Making a commit:
+	git add .
+	create a file "helloworld" with your RH email address in it
+	git status
+	git add ./helloworld
+		emphasize notion of staged, unstaged, and tracked files
+	git commit
+	git log
+		show commit ID/SHA
+		show HEAD and master
+	amending commits:
+		vim helloworld (add name to file)
+			git status: notice how instead of "untracked", the status is "modified"
+		git add helloworld
+		git commit --amend
+			if no commit message change is needed, git commit --amend --no-edit
+			don't ammend public commits, or commits that don't belong to you
+	git show
+		show how the first commit now has both changes in it
+	vim helloworld (add team to file)
+	git add helloworld
+	git commit -m "Added my team information"
+	git diff:
+		compares the changes since the specified commit, and the current one
+		show example of this
+	git log
+		git log --oneline for a clean view
+	vim a
+	git status (show untracked vs tracked)
+	git add a
+	git commit -m "Added file a."
+	SHOW YED REPO STATE
+
+Branching:
+	git branch <name> <parent>
+		if <parent> is empty, then the branch will start at HEAD
+		in this case, let's create a branch with the first commit as parent
+		git checkout -b <name> <parent> works too
+	create branch "conflict" based on commit before "a" was added
+		git branch conflict <id>
+	git branch shows which branch we are on
+	git branch -va shows all branches
+	git checkout conflict
+		go over git checkout, how it works, etc.
+		show git log and mention how the most recent commit is the parent
+	create and edit file a
+	git status
+	git add a
+	git commit -m "Added file a from a branch."
+	git checkout master
+	git log --graph --oneline --all
+		show branches
+	SHOW YED REPO STATE
+	Q&A
+
+BACK TO PRESENTATION
+
+Merging:
+	hop onto the branch you are merging onto, in most cases this will be master
+	make sure it's up to date
+	git merge conflict
+		if all went well, merge commit will be created ("fast forward merge")
+		if there are conflicts, resolve them; then git add, git commit, and done
+	SHOW YED REPO STATE
+
+BACK TO PRESENTATION
+
+Rebase:
+	hop back onto the branch "conflict"
+	do a git log, notice the merge commit is not here
+	conflict is now behind master
+	git rebase master
+		we have now rebased our branch onto master, so they are "in sync" with each other (git log)
+		SHOW YED REPO STATE
+	git checkout master
+	create a new file "b"
+	git add and git commit
+	git log
+		note that master is now ahead
+	git checkout conflict
+	create b on conflict
+	git add and commit
+		SHOE YED REPO STATE
+	git rebase master
+		there is a conflict! git status to show what it is
+		resolve and it and git add then git rebase --continue
+	git log
+		"conflict" is no longer behind
+		SHOW YED REPO STATE
+	git checkout master
+	git merge conflict_branch
+		SHOW YED REPO STATE
+
+Rebase advanced (-i)
+	create a new file, c, and add and commit it (on master)
+	git checkout conflict
+	create the same file (c) and add and commit it
+	modify helloworld (add university details), add and commit those changes
+	git log
+		conflict should have two commits in it now
+		git log master
+		SHOW YED REPO STATE
+	git rebase -i master
+		go over the different options, explain each one
+	squash the helloworld modifying commit
+	resolve the conflict in c
+		git add and git rebase --continue
+	write updated commit message
+	modify the commit messages
+		show what the options are here and how it works
+		SHOW YED REPO STATE
+	rebase complete, hop onto master and merge
+		SHOW YED REPO STATE
+	git log to show branches in harmony
+	look at the files to show contents in each survived the rebase
+
+BACK TO PRESENTATION
+
+Reset/revert demo:
+	create a new branch "bad" based on master
+	remove file c using git rm
+	git commit
+	create another commit making some modification
+	git rebase -i master and squash the commits into one
+	git checkout master
+		do git log with graph to show how bad is ahead of master by one commit
+	git merge bad
+	git log
+		show how master and bad are now synced, conflict lags behind one commit
+	git reset --soft HEAD^1
+		show how master is now back to conflict, and the changes from the bad branch are staged for us
+		-git merge bad to get it back to where we started
+	git reset --mixed HEAD^1
+		note how the commit from bad now takes the form of unstaged files in our repo
+		stage the files which were unstaged, git merge bad to get back to where we started
+	stage some files, then git reset --hard HEAD^1
+		show staging area is clean/wiped
+		only way to get back to where we were is to do git merge bad
+
+BACK TO PRESENTATION
+
+Reflog:
+	do git reflog
+		show the log and explain some of the items logged
+	find the git reset --hard HEAD^1 operation
+	git reset --hard <ID> to get back to state where we were before the reset
+	show how state is back to master being synced with bad, conflict one commit behind
+
+Cherry-pick:
+	git checkout conflict
+		remember, this branch is one commit behind master and bad
+	add a new file, d, git add and commit it
+	git rebase master
+		show a git log after to show where conflict is now
+	git log conflict to get the ID of the last commit on conflict
+	git cherry-pick -x <ID>
+	git log with graph to show where conflict is and cherrypicked commit
+		also show commit message in git log
+	Q&A
